@@ -1,0 +1,180 @@
+{
+  "main": {
+    "id": "0897ff7bd8576f88",
+    "type": "split",
+    "children": [
+      {
+        "id": "7cf476e8c42c6832",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "6b870f67967d4fc2",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "Nueva pestaña"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "5d9b946cea94bdb3",
+    "type": "split",
+    "children": [
+      {
+        "id": "bfec516739e1bfc5",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ae8a975625e5f80c",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Explorador de archivos"
+            }
+          },
+          {
+            "id": "f793c8e7096f9598",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Buscar"
+            }
+          },
+          {
+            "id": "3b54c7d759078e40",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Marcadores"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "0577f741d25bb2c1",
+    "type": "split",
+    "children": [
+      {
+        "id": "3cd5b22458d42699",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b3fc7d8b6bd381ba",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "pt/Bosquejo.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Enlaces entrantes de Bosquejo"
+            }
+          },
+          {
+            "id": "17d000f03b8f13e6",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "pt/Bosquejo.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Enlaces salientes de Bosquejo"
+            }
+          },
+          {
+            "id": "4c0a8e18569d55c4",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              },
+              "icon": "lucide-tags",
+              "title": "Etiquetas"
+            }
+          },
+          {
+            "id": "9e811e11431941a8",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "pt/Bosquejo.md"
+              },
+              "icon": "lucide-list",
+              "title": "Esquema de Bosquejo"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Abrir selector rápido": false,
+      "graph:Abrir vista gráfica": false,
+      "canvas:Crear nuevo lienzo": false,
+      "daily-notes:Abrir la nota de hoy": false,
+      "templates:Insertar plantilla": false,
+      "command-palette:Abrir paleta de comandos": false
+    }
+  },
+  "active": "6b870f67967d4fc2",
+  "lastOpenFiles": [
+    "Sin nombre/cup-ino.cls",
+    "Sin nombre/main.tex",
+    "Sin nombre/refs.bib",
+    "pt/~$squejo.docx",
+    "pt/Bosquejo.docx",
+    "pt/tex2pdf.-4315f0f613152c55/input.pdf",
+    "pt/tex2pdf.-4315f0f613152c55/input.aux",
+    "pt/tex2pdf.-4315f0f613152c55/input.log",
+    "pt/tex2pdf.-4315f0f613152c55/input.tex",
+    "pt/tex2pdf.-4315f0f613152c55",
+    "pt/tex2pdf.-6cf43a06182e40a3/input.pdf",
+    "pt/comando.md",
+    "pt/Bosquejo.md",
+    "Sin nombre/Sin título.md",
+    "Sin título.md",
+    "Bienvenido.md"
+  ]
+}
