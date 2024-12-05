@@ -5,27 +5,17 @@ date: "2024-12-05"
 ---
 
 
-## 1. Explicación del Caso
+## 1. Caso de Negocio
 
-El objetivo de este análisis es estimar los costos de dos equipos esenciales para un proyecto de construcción con una duración de 36 meses. La empresa constructora debe proporcionar los equipos necesarios, y el análisis se centra en la estimación de los costos de los equipos 1 y 2. Los precios de los equipos dependen de los costos de las materias primas que los componen, cuyas proporciones y precios varían a lo largo del tiempo.
-
-## Equipos a Estimar:
-
-- **Equipo 1**: 20% del precio está compuesto por la materia prima X, y el 80% restante por la materia prima Y.
-- **Equipo 2**: El precio está compuesto en partes iguales por las materias primas X, Y y Z.
-
-### Beneficios Esperados:
-
-- Mejora de la planificación financiera del proyecto al proporcionar estimaciones de costos más precisas.
-- Optimización de los recursos al seleccionar proveedores con la mejor relación costo-beneficio.
+Se ha requerido estimar los costos de dos equipos esenciales para un proyecto de construcción, con una duración de 36 meses. El cliente (empresa constructora) debe proporcionar los equipos necesarios, y el análisis se centra en la estimación del precio de los equipos __1__ y __2__. Dichos precios dependen directamente del valor de mercado de las materias primas $X$, $Y$, $Z$. El equipo 1 está compuesto en un 20% por la materia prima $X$ y un 80% por la materia prima $Y$. Por otro lado, el equipo 2 está compuesto por iguales proporciones de las materias primas $X$, $Y$ y $Z$.
+El objetivo de este estudio es optimizar el monto de inversión que la empresa constructora debe realizar en la adquisición de los equipos en el futuro.
 
 ## 2. Supuestos
 
-- Se cuenta con datos históricos diarios de precios de las materias primas X, Y y Z durante los últimos 5000 días.
-- Se asume que los precios históricos reflejan los posibles valores futuros de las materias primas.
-- Este enfoque ha demostrado ser efectivo en el contexto de la gestión de proyectos [^1].
-- El modelo de forecasting utilizado se basa en el análisis de series temporales, considerando la estacionalidad y tendencias de los precios.
-- Las predicciones de los precios de las materias primas a futuro serán utilizadas para estimar los costos de los equipos.
+- Se cuenta con datos históricos diarios de precios de las materias primas $X$, $Y$ y $Z$.
+- Los datos históricos se recopilan desde junio 1988, noviembre 2006 y enero 2010 para $X$, $Y$ y $Z$, respectivamente.
+- Los datos históricos se recopilan hasta abril 2024, diciembre 2023 y agosto 2023 para $X$, $Y$ y $Z$, respectivamente.
+- Cada materia prima es susceptible a distinta volatilidad [^1].
 
 ## 3. Formas para Resolver el Caso y Opción Tomada
 

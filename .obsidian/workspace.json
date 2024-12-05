@@ -11,10 +11,14 @@
             "id": "6b870f67967d4fc2",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "intento_1/Bosquejo.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "Nueva pestaña"
+              "title": "Bosquejo"
             }
           }
         ]
@@ -160,8 +164,9 @@
   },
   "active": "6b870f67967d4fc2",
   "lastOpenFiles": [
-    "intento_1/referencias.bib",
+    "primerbosquejo/Bosquejo.md",
     "intento_1/Bosquejo.md",
+    "intento_1/referencias.bib",
     "intento_1/apa.csl",
     "intento_1/main.tex",
     "intento_1/cup-ino.cls",
@@ -171,7 +176,6 @@
     "Sin nombre/cup-ino.cls",
     "Sin nombre/main.tex",
     "Sin nombre/refs.bib",
-    "pt/~$squejo.docx",
     "pt/comando.md",
     "pt/Bosquejo.md",
     "Sin nombre/Sin título.md",
