@@ -2,6 +2,7 @@
 title: "Análisis de Políticas Públicas"
 author: "Tu Nombre"
 date: "2024-12-05"
+bibliography: "referencias.bib"
 ---
 
 
@@ -23,15 +24,7 @@ $$
 \int_{-\infty}^{\infty} H_n(x) H_m(x) e^{-x^2} \, dx = 0 \quad \text{para } n \neq m.
 $$
 
-Para resolver el caso, se utilizó el **modelo ARIMA** para el forecasting de los precios de las materias primas. El proceso se desglosó en los siguientes pasos:
 
-1. **Preprocesamiento de los datos**: Los datos históricos fueron analizados y preparados, asegurando que no hubiese valores faltantes ni inconsistencias. Se verificó la estacionariedad de las series temporales de los precios mediante la prueba de Dickey-Fuller.
-   
-2. **Selección del Modelo de Forecasting**: Se eligió el modelo **ARIMA** para modelar los precios de las materias primas debido a su capacidad para capturar tendencias y patrones en series temporales. El modelo fue ajustado con los parámetros más adecuados tras realizar pruebas y análisis de autocorrelación.
-
-3. **Pronóstico de Precios Futuros**: Utilizando el modelo ARIMA, se realizaron predicciones para los próximos 12 meses de precios de las materias primas X, Y y Z.
-
-4. **Estimación de Costos**: Los precios pronosticados fueron utilizados para calcular el costo de los dos equipos en base a las proporciones de cada materia prima especificadas.
 
 ### Código utilizado:
 
@@ -47,7 +40,7 @@ forecast = modelo_ajustado.forecast(steps=12)
 
 El análisis de las políticas públicas ha demostrado que las reformas implementadas han tenido efectos significativos en la sociedad [@perez2020].
 
-Además, algunos estudios sugieren que las políticas sociales, 
+Además, algunos estudios sugieren que las políticas sociales,
 cuando están bien implementadas, tienen un impacto directo sobre la calidad de vida [@gonzalez2019].
 
 
@@ -64,4 +57,4 @@ Si tienes una serie temporal específica en mente o deseas profundizar en algún
 % Bibliografía
 % \nocite{*}
 % 
-% [^1]: Pérez, Juan. *Gestión de Proyectos Eficaz*. Editorial Academia, 2019.
+% [^1]:  Eficaz*. Editorial Academia, 2019.

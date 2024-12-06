@@ -4,18 +4,20 @@
     "type": "split",
     "children": [
       {
-        "id": "7cf476e8c42c6832",
+        "id": "1452eb0c23e34f73",
         "type": "tabs",
         "children": [
           {
-            "id": "6b870f67967d4fc2",
+            "id": "9b56d9931b714ad5",
             "type": "leaf",
             "state": {
-              "type": "pdf",
+              "type": "markdown",
               "state": {
-                "file": "primerbosquejo/Bosquejo.pdf"
+                "file": "intento_1/Bosquejo.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-file-text",
+              "icon": "lucide-file",
               "title": "Bosquejo"
             }
           }
@@ -160,20 +162,21 @@
       "command-palette:Abrir paleta de comandos": false
     }
   },
-  "active": "6b870f67967d4fc2",
+  "active": "9b56d9931b714ad5",
   "lastOpenFiles": [
+    "intento_1/tex2pdf.-287e10be425a86af/input.pdf",
+    "intento_1/tex2pdf.-287e10be425a86af/input.aux",
+    "intento_1/tex2pdf.-287e10be425a86af/input.log",
+    "intento_1/tex2pdf.-287e10be425a86af/input.tex",
+    "intento_1/tex2pdf.-287e10be425a86af",
+    "intento_1/Bosquejo.pdf",
+    "intento_1/tex2pdf.-25f013a478c36834/input.pdf",
+    "intento_1/tex2pdf.-25f013a478c36834/input.aux",
+    "intento_1/tex2pdf.-25f013a478c36834/input.log",
+    "intento_1/tex2pdf.-25f013a478c36834/input.tex",
+    "intento_1/tex2pdf.-25f013a478c36834",
     "primerbosquejo/Bosquejo.md",
     "intento_1/Bosquejo.md",
-    "intento_1/referencias.bib",
-    "intento_1/apa.csl",
-    "intento_1/main.tex",
-    "intento_1/cup-ino.cls",
-    "intento_1/desktop.ini",
-    "intento_1",
-    "Nueva carpeta",
-    "Sin nombre/cup-ino.cls",
-    "Sin nombre/main.tex",
-    "Sin nombre/refs.bib",
     "pt/comando.md",
     "pt/Bosquejo.md",
     "Sin nombre/Sin título.md",
