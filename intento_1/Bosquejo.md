@@ -9,7 +9,7 @@ bibliography: "referencias.bib"
 ## 1. Caso de Negocio
 
 Se ha requerido estimar los costos de dos equipos esenciales para un proyecto de construcción, con una duración de 36 meses. El cliente (empresa constructora) debe proporcionar los equipos necesarios, y el análisis se centra en la estimación del precio de los equipos __1__ y __2__. Dichos precios dependen directamente del valor de mercado de las materias primas $X$, $Y$, $Z$. El equipo 1 está compuesto en un 20% por la materia prima $X$ y un 80% por la materia prima $Y$. Por otro lado, el equipo 2 está compuesto por iguales proporciones de las materias primas $X$, $Y$ y $Z$.
-El objetivo de este estudio es optimizar el monto de inversión que la empresa constructora debe realizar en la adquisición de los equipos en el futuro. Para esto, se usarán técnicas de análisis de series temporales para predecir los precios de las materias primas $X$, $Y$ y $Z$ en los próximos 36 meses.
+El objetivo de este estudio es optimizar el monto de inversión que la empresa constructora debe realizar en la adquisición de los equipos en el futuro. Para esto, se usarán técnicas de análisis de series temporales (Teoría: Ver Anexo 1) para predecir los precios de las materias primas $X$, $Y$ y $Z$ en los próximos 36 meses.
 
 ## 2. Supuestos
 
@@ -26,7 +26,7 @@ El objetivo de este estudio es optimizar el monto de inversión que la empresa c
 4. __Evaluar resultados__: Con medidas de dispersión como el error cuadrático medio (MSE) y el error absoluto medio (MAE), se evaluaron las predicciones obtenidas.
 5. __Consideraciones finales__: Desarrollo de las conclusiones y consideración de las posibles modificaciones futuras en pos de enriquecer la excatitud y precisión de este análisis.
 
-## 4. Análisis completo
+## 4. Análisis
 
 ### Preprocesamiento de los datos
 
@@ -110,7 +110,7 @@ Se descarga el modelo y se ejecuta en un entorno local para hacer las prediccion
 
 ### Trabajo en entorno local
 
-El entrenamiento para las materias primas $Y$ y $Z$ se realizó en notebooks ejecutados en un entorno local. Se utilizó la clase `XGBRegressor` de la librería `xgboost' para entrenar los modelos y hacer las predicciones, a través del método __recursive forecasting__. A continuación, se muestra un extracto del código utilizado para el entrenamiento y la predicción de los precios de la materia prima $Y$. El código para z es equivalente.
+El entrenamiento para las materias primas $Y$ y $Z$ se realizó en notebooks ejecutados en un entorno local. Se utilizó la clase `XGBRegressor` de la librería `xgboost` para entrenar los modelos y hacer las predicciones, a través del método __recursive forecasting__. A continuación, se muestra un extracto del código utilizado para el entrenamiento y la predicción de los precios de la materia prima $Y$. El código para z es equivalente.
 
     ```python
     % from sklearn.model_selection import train_test_split
@@ -175,42 +175,88 @@ Observamos que se tienen fluctuaciones abruptas en los precios. Esto explica el 
 Teniendo los modelos entrenados podemos hacer las predicciones para los próximos 36 meses. Teniendo en cuenta que un dataset tiene datos hasta 2023 mientras que los otros dos tienen datos hasta 2024 (año actual), en dicho modelo se harán las predicciones para 'sus' próximos 48 meses.
 En la siguiente tabla se consignan los valores obtenidos para los meses 0 (actualidad), 12, 24 y 36.
 
+'''
+89,180  	82,790	    88,200	    79,520
+547,330	    614,070	    589,300 	568,930
+2165,250	1834,140	2246,750	2483,450
+
+'''
+
 | Materia Prima | Mes 0 | Mes 12 | Mes 24 | Mes 36 |
 |---------------|-------|--------|--------|--------|
-| X             | 12.5  | 13.2   | 14.1   | 11.1   |
+|      $X$ +- 1.73      | 89.2  | 82.8   | 88.2   | 79.5   |
+|      $Y$ +- 12.4      | 547.3 | 614.1  | 589.3  | 568.9  |
+|      $Z$ +- 32.49     | 2165.3| 1834.1 | 2246.7 | 2483.5 |
 
-La medida de confianza que se usa para reportar cada predicción es el intervalo de predicción, que se calcula a partir de la __desviación estándar de los residuos__(Ver Anexo 8) del modelo.
-
+La medida de confianza que se usa para reportar cada predicción es el intervalo de predicción, que se calcula a partir de la __desviación estándar de los residuos__(Ver Anexo 8) y el $mse$ de cada modelo.
+Veamos ahora el calculo de los costos de los equipos 1 y 2 para el futuro (tabla: \ref{tab:costos_equipos}).
 $$
-\int_{-\infty}
+\text{Costo Equipo 1} = 0.2 \times \text{Precio $X$} + 0.8 \times \text{Precio $Y$}~ \text{Costo Equipo 2} = dfrac{1}{3} (\times \text{Precio $X$} + \times \text{Precio $Y$} + \times \text{Precio $Z$})
 $$
 
 
-### Código utilizado
 
-    ```python
-    # Ejemplo de código de ajuste del modelo ARIMA para la materia prima X
-    from statsmodels.tsa.arima.model import ARIMA
-    modelo = ARIMA(precio_x, order=(1,1,1))
-    modelo_ajustado = modelo.fit()
-    forecast = modelo_ajustado.forecast(steps=12)
-    ```
+|      | Actualidad | Mes 12 | Mes 24 | Mes 36 |
+|------|------------|--------|--------|--------|
+| Equipo 1 | 455.7 +- (89.2 * 0.0173)+ (547.3 * 0.124) | 507.8 +- | 489.08 +- | 471.05 +- |
+| Equipo 2 | 933.92 +- (89.2 * 0.0173)+ (547.3 * 0.124) + (2165.3 * 0.3249) | 843.67 +- | 974.75 +- | 1043.97 +- |
+| Total | 1389.62 +- | 1351.5 +- | 1463.83 +- | 1515.0 +- |
 
-## Estudio sobre Políticas Públicas
+## 5. Consideraciones finales
+En conclusión, el momento óptimo para la adquisición de los equipos es en 12 meses de desarrollo del proyecto, pues los costos de los equipos 1 y 2 son menores en comparación con los costos actuales y futuros. Sin embargo, es importante tener en cuenta que las predicciones realizadas tienen un margen de error, por lo que se recomienda monitorear los precios de las materias primas y ajustar las estrategias de inversión en consecuencia. Por ejemplo, reentrenar los modelos en el transcurso del futuro. También se podría agregar una medida de la inflación prevista por el banco mundial (u organismos similares) en el pais donde se desarrolla el proyecto; además de una medida de la volatilidad del mercado (Hstórica y esperada) para las materias primas. 
 
-El análisis de las políticas públicas ha demostrado que las reformas implementadas han tenido efectos significativos en la sociedad [@perez2020].
 
-Además, algunos estudios sugieren que las políticas sociales,
-cuando están bien implementadas, tienen un impacto directo sobre la calidad de vida [@gonzalez2019].
 
 ## Conclusión
 
 El análisis de series temporales abarca una amplia variedad de métodos, desde los tradicionales enfoques estadísticos (como ARIMA o GARCH) hasta técnicas más modernas de aprendizaje automático (como redes neuronales y árboles de decisión). La elección del enfoque depende de la naturaleza de los datos, los objetivos del análisis (predicción, comprensión de patrones) y las características específicas de la serie temporal que se está analizando (estacionalidad, volatilidad, tendencia, etc.).
 
-% Bibliografía
-% \nocite{*}
 
 ## Anexo 1
+
+El estudio de series temporales es un tema extenso, por lo tanto se tratará solamente modelos de Machine Learning: XGBoost y ARIMAX. XGBoost es un algoritmo de aprendizaje automático basado en árboles de decisión que se utiliza comúnmente para problemas de regresión. Su formalización matemática se basa en la minimización de una función de pérdida, de la siguiente forma:
+
+\[
+\mathcal{L} = \sum_{i=1}^{n} L(y_i, \hat{y}_i) + \sum_{k=1}^{K} \Omega(h_k)
+\]
+XGBoost utiliza una aproximación de **segunda orden** (incluyendo derivadas primeras y segundas) para optimizar la función de pérdida. Para cada iteración \( k \), se calcula la mejora \( \gamma_k \) que minimiza la función objetivo:
+
+\[
+\gamma_k = \arg\min_{\gamma} \left[ \sum_{i \in I_k} L(y_i, F_{k-1}(x_i) + \gamma) \right] + \Omega(\gamma)
+\]
+XGBoost construye árboles de decisión de manera aditiva. Cada árbol nuevo se agrega al modelo existente para corregir los errores residuales. La construcción de cada árbol implica:
+
+1. **División de Nodos:** Selección de la mejor característica y punto de división que maximice la ganancia de información.
+2. **Asignación de Pesos:** Determinación de los pesos óptimos para cada hoja, minimizando la función objetivo localmente.
+3. **Poda:** Eliminación de ramas que no contribuyen significativamente al modelo, según los parámetros de regularización.
+
+Por otro lado, ARIMAX es un modelo de regresión lineal que incorpora términos autorregresivos (AR), de medias móviles (MA) y diferenciación (I) para modelar series temporales. Antes de profundizar en ARIMAX, es esencial comprender los componentes básicos de ARIMA:
+
+- **AR (AutoRegressive):** Captura la relación lineal entre una observación actual y un número de observaciones anteriores.
+- **I (Integrated):** Indica el número de veces que la serie debe ser diferenciada para alcanzar la estacionariedad.
+- **MA (Moving Average):** Modela el error de predicción como una combinación lineal de errores pasados.
+El modelo ARIMAX puede expresarse como:
+
+\[
+\Phi(B) (1 - B)^d Y_t = \Theta(B) \epsilon_t + \beta_1 X_{1,t} + \beta_2 X_{2,t} + \dots + \beta_k X_{k,t}
+\]
+
+Donde:
+
+- \( B \) es el operador de rezago (\( B Y_t = Y_{t-1} \)).
+- \( \Phi(B) = 1 - \phi_1 B - \phi_2 B^2 - \dots - \phi_p B^p \) representa la parte autorregresiva.
+- \( \Theta(B) = 1 + \theta_1 B + \theta_2 B^2 + \dots + \theta_q B^q \) representa la parte de media móvil.
+- \( \epsilon_t \) es el término de error aleatorio, generalmente asumido como ruido blanco (\( \epsilon_t \sim \mathcal{N}(0, \sigma^2) \)).
+- \( \beta_1, \beta_2, \dots, \beta_k \) son los coeficientes asociados a las variables exógenas \( X_{1,t}, X_{2,t}, \dots, X_{k,t} \).
+
+ARIMAX es usado en multiples campos, tales como:
+
+- **Economía:** Modelado de indicadores macroeconómicos influenciados por variables exógenas como tasas de interés.
+- **Marketing:** Predicción de ventas basada en campañas publicitarias u otras variables de marketing.
+- **Salud Pública:** Pronóstico de enfermedades considerando factores externos como clima o políticas de salud.
+- **Ingeniería:** Monitoreo de procesos industriales con influencias externas.
+
+## Anexo 2
 
 ## Anexo 8
 
