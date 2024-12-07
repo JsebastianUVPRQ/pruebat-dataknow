@@ -9,7 +9,8 @@ bibliography: "referencias.bib"
 ## 1. Caso de Negocio
 
 Se ha requerido estimar los costos de dos equipos esenciales para un proyecto de construcción, con una duración de 36 meses. El cliente (empresa constructora) debe proporcionar los equipos necesarios, y el análisis se centra en la estimación del precio de los equipos __1__ y __2__. Dichos precios dependen directamente del valor de mercado de las materias primas $X$, $Y$, $Z$. El equipo 1 está compuesto en un 20% por la materia prima $X$ y un 80% por la materia prima $Y$. Por otro lado, el equipo 2 está compuesto por iguales proporciones de las materias primas $X$, $Y$ y $Z$.
-El objetivo de este estudio es optimizar el monto de inversión que la empresa constructora debe realizar en la adquisición de los equipos en el futuro. Para esto, se usarán técnicas de análisis de series temporales (Teoría: Ver Anexo 1) para predecir los precios de las materias primas $X$, $Y$ y $Z$ en los próximos 36 meses.
+El objetivo de este estudio es optimizar el monto de inversión que la empresa constructora debe realizar en la adquisición de los equipos en el futuro. Para esto, se usarán técnicas de análisis de series temporales (Teoría: Ver Anexo 1) para predecir los precios de las materias primas $X$, $Y$ y $Z$ en los próximos 36 meses. 
+Se reporta como resultado que el momento óptimo para la compra de los equipos es aproximadamente en el mes 12, contando desde la actualidad. Si los equipos se requieren inmediatamente, se puede gestionar con mecanismos como Contratos de Ajuste de Precios () o Pago diferido 
 
 ## 2. Supuestos
 
@@ -20,7 +21,7 @@ El objetivo de este estudio es optimizar el monto de inversión que la empresa c
 
 ## 3. Metodología
 
-1. __Preprocesamiento de los datos__: Los datos históricos fueron analizados y preparados, asegurando que no hubiese valores faltantes ni inconsistencias. Se estandarizó el formato de las fechas (YYYY-MM-DD) y los separadores decimales.
+1. __Preprocesamiento de los datos__: Los datos históricos fueron analizados y preparados, asegurando que no hubiese valores faltantes ni inconsistencias. Se estandarizó el formato de las fechas $(YYYY-MM-DD)$ y los separadores decimales.
 2. __Trabajo en la suit de Azure__: Se utilizó la suite de Azure para el análisis de series temporales de la materia prima $X$. Se obtuvo un modelo ARIMA ajustado y luego, en un entorno local, se llevaron a cabo las predicciones para los próximos 36 meses.
 3. __Trabajo en entorno local__: Para hacer forecasting de las materias primas $Y$ y $Z$, se utilizó el modelo XGBoost, el cual permite trabajar con series temporales no estacionarias y con múltiples variables predictoras.
 4. __Evaluar resultados__: Con medidas de dispersión como el error cuadrático medio (MSE) y el error absoluto medio (MAE), se evaluaron las predicciones obtenidas.
@@ -55,7 +56,7 @@ Azure cloud tiene una serie de herramientas que van desde no-code hasta ejecuci�
 
 [^2]: <https://learn.microsoft.com/en-us/azure/machine-learning/quickstart-create-resources>
 
-La carga de los datasets, y almacenamiento de los datasets, el aprovisionamiento de los recursos de cómputo, monitoreo de trabajos, etc; está en el (Anexo 3). El procedimiento lo desarrollé en la interfaz gráfica de Azure AutoML, donde se selecciona el dataset, se elige la variable objetivo, se selecciona el tipo de predicción y se lanzan los experimentos; pero se genera el código que se ejecuta en el entorno de Azure. A continueciòn presento un extracto.
+La carga de los datasets, y almacenamiento de los datasets, el aprovisionamiento de los recursos de cómputo, monitoreo de trabajos, etc; está en el (Anexo 3). El procedimiento lo desarrollé en la interfaz gráfica de Azure AutoML, donde se selecciona el dataset, se elige la variable objetivo, se selecciona el tipo de predicción y se lanzan los experimentos; pero se genera el código que se ejecuta en el entorno de Azure. A continuación presento un extracto.
 
     ```python
 
@@ -175,13 +176,6 @@ Observamos que se tienen fluctuaciones abruptas en los precios. Esto explica el 
 Teniendo los modelos entrenados podemos hacer las predicciones para los próximos 36 meses. Teniendo en cuenta que un dataset tiene datos hasta 2023 mientras que los otros dos tienen datos hasta 2024 (año actual), en dicho modelo se harán las predicciones para 'sus' próximos 48 meses.
 En la siguiente tabla se consignan los valores obtenidos para los meses 0 (actualidad), 12, 24 y 36.
 
-'''
-89,180  	82,790	    88,200	    79,520
-547,330	    614,070	    589,300 	568,930
-2165,250	1834,140	2246,750	2483,450
-
-'''
-
 | Materia Prima | Mes 0 | Mes 12 | Mes 24 | Mes 36 |
 |---------------|-------|--------|--------|--------|
 |      $X$ +- 1.73      | 89.2  | 82.8   | 88.2   | 79.5   |
@@ -194,8 +188,6 @@ $$
 \text{Costo Equipo 1} = 0.2 \times \text{Precio $X$} + 0.8 \times \text{Precio $Y$}~ \text{Costo Equipo 2} = dfrac{1}{3} (\times \text{Precio $X$} + \times \text{Precio $Y$} + \times \text{Precio $Z$})
 $$
 
-
-
 |      | Actualidad | Mes 12 | Mes 24 | Mes 36 |
 |------|------------|--------|--------|--------|
 | Equipo 1 | 455.7 +- (89.2 * 0.0173)+ (547.3 * 0.124) | 507.8 +- | 489.08 +- | 471.05 +- |
@@ -203,14 +195,12 @@ $$
 | Total | 1389.62 +- | 1351.5 +- | 1463.83 +- | 1515.0 +- |
 
 ## 5. Consideraciones finales
-En conclusión, el momento óptimo para la adquisición de los equipos es en 12 meses de desarrollo del proyecto, pues los costos de los equipos 1 y 2 son menores en comparación con los costos actuales y futuros. Sin embargo, es importante tener en cuenta que las predicciones realizadas tienen un margen de error, por lo que se recomienda monitorear los precios de las materias primas y ajustar las estrategias de inversión en consecuencia. Por ejemplo, reentrenar los modelos en el transcurso del futuro. También se podría agregar una medida de la inflación prevista por el banco mundial (u organismos similares) en el pais donde se desarrolla el proyecto; además de una medida de la volatilidad del mercado (Hstórica y esperada) para las materias primas. 
 
-
+En conclusión, el momento óptimo para la adquisición de los equipos es en 12 meses de desarrollo del proyecto, pues los costos de los equipos 1 y 2 son menores en comparación con los costos actuales y futuros. Sin embargo, es importante tener en cuenta que las predicciones realizadas tienen un margen de error, por lo que se recomienda monitorear los precios de las materias primas y ajustar las estrategias de inversión en consecuencia. Por ejemplo, reentrenar los modelos en el transcurso del futuro. También se podría agregar una medida de la inflación prevista por el banco mundial (u organismos similares) en el pais donde se desarrolla el proyecto; además de una medida de la volatilidad del mercado (Hstórica y esperada) para las materias primas.
 
 ## Conclusión
 
 El análisis de series temporales abarca una amplia variedad de métodos, desde los tradicionales enfoques estadísticos (como ARIMA o GARCH) hasta técnicas más modernas de aprendizaje automático (como redes neuronales y árboles de decisión). La elección del enfoque depende de la naturaleza de los datos, los objetivos del análisis (predicción, comprensión de patrones) y las características específicas de la serie temporal que se está analizando (estacionalidad, volatilidad, tendencia, etc.).
-
 
 ## Anexo 1
 
@@ -219,7 +209,7 @@ El estudio de series temporales es un tema extenso, por lo tanto se tratará sol
 \[
 \mathcal{L} = \sum_{i=1}^{n} L(y_i, \hat{y}_i) + \sum_{k=1}^{K} \Omega(h_k)
 \]
-XGBoost utiliza una aproximación de **segunda orden** (incluyendo derivadas primeras y segundas) para optimizar la función de pérdida. Para cada iteración \( k \), se calcula la mejora \( \gamma_k \) que minimiza la función objetivo:
+XGBoost utiliza una aproximación de __segunda orden__ (incluyendo derivadas primeras y segundas) para optimizar la función de pérdida. Para cada iteración \( k \), se calcula la mejora \( \gamma_k \) que minimiza la función objetivo:
 
 \[
 \gamma_k = \arg\min_{\gamma} \left[ \sum_{i \in I_k} L(y_i, F_{k-1}(x_i) + \gamma) \right] + \Omega(\gamma)
@@ -258,30 +248,30 @@ ARIMAX es usado en multiples campos, tales como:
 
 ## Anexo 2
 
-```python	
-# leer archivos (3 excels) contenidos en la carpeta 'datos'
-df1 = pd.read_csv('Datos/X.csv')
-df2 = pd.read_csv('Datos/Y.csv', delimiter=';')
-df3 = pd.read_csv('Datos/Z.csv')
-# ...
-df1 = df1.iloc[::-1]
-# resetear el indice de df1
-df1 = df1.reset_index(drop=True)
+    ```python
+    # leer archivos (3 excels) contenidos en la carpeta 'datos'
+    df1 = pd.read_csv('Datos/X.csv')
+    df2 = pd.read_csv('Datos/Y.csv', delimiter=';')
+    df3 = pd.read_csv('Datos/Z.csv')
+    # ...
+    df1 = df1.iloc[::-1]
+    # resetear el indice de df1
+    df1 = df1.reset_index(drop=True)
 
-# cambiar los / por - en la columna 'Date' y convertir la columna 'Price' a tipo float
-df2['Date'] = df2['Date'].str.replace('/', '-')
-df2['Price'] = df2['Price'].str.replace(',', '.').astype(float)
+    # cambiar los / por - en la columna 'Date' y convertir la columna 'Price' a tipo float
+    df2['Date'] = df2['Date'].str.replace('/', '-')
+    df2['Price'] = df2['Price'].str.replace(',', '.').astype(float)
 
-# convertir la columna 'Date' a tipo datetime
-df2['Date'] = pd.to_datetime(df2['Date'])
-# pasar del formato dd/mm/yyyy a yyyy-mm-dd
-df2['Date'] = pd.to_datetime(df2['Date'], format='%d/%m/%Y').dt.strftime('%Y-%m-%d')
+    # convertir la columna 'Date' a tipo datetime
+    df2['Date'] = pd.to_datetime(df2['Date'])
+    # pasar del formato dd/mm/yyyy a yyyy-mm-dd
+    df2['Date'] = pd.to_datetime(df2['Date'], format='%d/%m/%Y').dt.strftime('%Y-%m-%d')
 
-# exportar los dataframes a archivos csv
-df1.to_csv('Datos/X_modificado.csv', index=True)
-df2.to_csv('Datos/Y_modificado.csv', index=True)
-df3.to_csv('Datos/Z_modificado.csv', index=True)
-```	
+    # exportar los dataframes a archivos csv
+    df1.to_csv('Datos/X_modificado.csv', index=True)
+    df2.to_csv('Datos/Y_modificado.csv', index=True)
+    df3.to_csv('Datos/Z_modificado.csv', index=True)
+    ```
 
 ## Anexo 3
 
@@ -290,7 +280,7 @@ df3.to_csv('Datos/Z_modificado.csv', index=True)
 las medidas de dispersión usadas fueron, básicamente, la desviación estándar y el error cuadrático medio (MSE). La desviación estándar se define como la raíz cuadrada de la varianza, y mide la dispersión de los datos alrededor de la media. Por otro lado, el MSE es una medida de la diferencia entre los valores observados y los valores predichos por un modelo.
 
 $$
-\text{Desviación Estándar} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})^2} 
+\text{Desviación Estándar} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})^2}
 $$
 
 $$
