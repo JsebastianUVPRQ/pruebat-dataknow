@@ -110,11 +110,77 @@ Se descarga el modelo y se ejecuta en un entorno local para hacer las prediccion
 
 ### Trabajo en entorno local
 
-El entrenamiento para las materias primas $Y$ y $Z$ se realizó en notebooks ejecutados en un entorno local. Se utilizó la clase `XGBRegressor` de la librería `xgboost' para entrenar los modelos y hacer las predicciones. A continuación, se muestra un extracto del código utilizado para el entrenamiento y la predicción de los precios de la materia prima $Y$. El código para z es equivalente.
+El entrenamiento para las materias primas $Y$ y $Z$ se realizó en notebooks ejecutados en un entorno local. Se utilizó la clase `XGBRegressor` de la librería `xgboost' para entrenar los modelos y hacer las predicciones, a través del método __recursive forecasting__. A continuación, se muestra un extracto del código utilizado para el entrenamiento y la predicción de los precios de la materia prima $Y$. El código para z es equivalente.
 
     ```python
+    % from sklearn.model_selection import train_test_split
+    % from sklearn.metrics import mean_squared_error
+    % import xgboost as xgb
+    % from sklearn.preprocessing import StandardScaler
+    # ...
+    df['Date'] = pd.to_datetime(df['Date'])
+
+    # Establecer la columna 'fecha' como índice
+    df.set_index('Date', inplace=True)
+    # ...
+    # Crear características de serie temporal (lag features)
+    def create_lag_features(df, lags=5):
+        for lag in range(1, lags + 1):
+            df[f'lag_{lag}'] = df['Price'].shift(lag)
+        df = df.dropna()  # Eliminar filas con valores nulos
+        return df
+
+    # Crear características de lag
+    df = create_lag_features(df, lags=5)
+
+    # Dividir los datos en conjunto de entrenamiento y prueba
+    train_size = int(len(df) * 0.7)
+    train, test = df.iloc[:train_size], df.iloc[train_size:]
+
+    # Separar las características (X) y el target (y)
+    X_train = train.drop(columns=['Price'])
+    y_train = train['Price']
+    X_test = test.drop(columns=['Price'])
+    y_test = test['Price']
+    # ...
+    # Create forecaster
+    # ==============================================================================
+    end_validation = '2023-12-09'
+
+    window_features = RollingFeatures(stats=["coef_variation"], window_sizes=4200)
+    forecaster = ForecasterRecursive(
+                    regressor       = XGBRegressor(random_state=15926, enable_categorical=True),
+                    lags            = 3000,
+                    window_features = window_features
+                 )
+
+    # Train forecaster
+    # ==============================================================================
+    forecaster.fit(y=df.loc[:end_validation, 'Price'])
+    
+    # Calcular el error cuadrático medio (MSE) -> El resultado fue 61.2
+    mse = mean_squared_error(y_train, predictions)
+    print(f"Error cuadrático medio (MSE): {mse  }")
+
+    # prediccion_anio_n = forecaster.predict(steps=(365*n))
+
 
     ```
+La mse (error cuadrático medio) obtenida fue de 61.2, lo cual es un valor relativamente alto para los valores registrados como precio en el dataset de $Y$. Si graficamos los históricos, el set de entrenamiento y las predicciones para el set de entrenamiento, obtenemos lo siguiente:
+![[y_historico.png]]
+![[train_vs_pred_volatilidad.png]]
+
+Observamos que se tienen fluctuaciones abruptas en los precios. Esto explica el valor que obtuvimos para la métrica de evaluación, pues los 'lags' que se usaron para entrenar el modelo no capturan suficientemente la volatilidad de los precios. En la sección de consideraciones finales este será uno de los temas a tratar.
+
+Teniendo los modelos entrenados podemos hacer las predicciones para los próximos 36 meses. Teniendo en cuenta que un dataset tiene datos hasta 2023 mientras que los otros dos tienen datos hasta 2024 (año actual), en dicho modelo se harán las predicciones para 'sus' próximos 48 meses.
+En la siguiente tabla se consignan los valores obtenidos para los meses 0 (actualidad), 12, 24 y 36.
+
+| Materia Prima | Mes 0 | Mes 12 | Mes 24 | Mes 36 |
+|---------------|-------|--------|--------|--------|
+| X             | 12.5  | 13.2   | 14.1   | 11.1   |
+
+La medida de confianza que se usa para reportar cada predicción es el intervalo de predicción, que se calcula a partir de la __desviación estándar de los residuos__(Ver Anexo 8) del modelo. 
+
 
 $$
 \int_{-\infty}
@@ -147,3 +213,7 @@ El análisis de series temporales abarca una amplia variedad de métodos, desde 
 
 % Bibliografía
 % \nocite{*}
+
+# Anexo 1.
+# Anexo 8.
+
