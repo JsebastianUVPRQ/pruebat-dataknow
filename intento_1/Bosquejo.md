@@ -179,22 +179,22 @@ En la siguiente tabla se consignan los valores obtenidos para los meses 0 (actua
 |---------------|-------|--------|--------|--------|
 | X             | 12.5  | 13.2   | 14.1   | 11.1   |
 
-La medida de confianza que se usa para reportar cada predicción es el intervalo de predicción, que se calcula a partir de la __desviación estándar de los residuos__(Ver Anexo 8) del modelo. 
-
+La medida de confianza que se usa para reportar cada predicción es el intervalo de predicción, que se calcula a partir de la __desviación estándar de los residuos__(Ver Anexo 8) del modelo.
 
 $$
 \int_{-\infty}
 $$
 
+
 ### Código utilizado
 
-```python
-# Ejemplo de código de ajuste del modelo ARIMA para la materia prima X
-from statsmodels.tsa.arima.model import ARIMA
-modelo = ARIMA(precio_x, order=(1,1,1))
-modelo_ajustado = modelo.fit()
-forecast = modelo_ajustado.forecast(steps=12)
-```
+    ```python
+    # Ejemplo de código de ajuste del modelo ARIMA para la materia prima X
+    from statsmodels.tsa.arima.model import ARIMA
+    modelo = ARIMA(precio_x, order=(1,1,1))
+    modelo_ajustado = modelo.fit()
+    forecast = modelo_ajustado.forecast(steps=12)
+    ```
 
 ## Estudio sobre Políticas Públicas
 
@@ -203,10 +203,6 @@ El análisis de las políticas públicas ha demostrado que las reformas implemen
 Además, algunos estudios sugieren que las políticas sociales,
 cuando están bien implementadas, tienen un impacto directo sobre la calidad de vida [@gonzalez2019].
 
-__Modelos de Longo Plazo y Ciclos__
-
-- En algunos casos, las series temporales presentan __ciclos__ o tendencias de largo plazo que no son estrictamente estacionales, sino influenciados por factores macroeconómicos o industriales. Los __modelos de ciclos económicos__ o __ciclos de mercado__ pueden ser útiles para capturar estos patrones.
-
 ## Conclusión
 
 El análisis de series temporales abarca una amplia variedad de métodos, desde los tradicionales enfoques estadísticos (como ARIMA o GARCH) hasta técnicas más modernas de aprendizaje automático (como redes neuronales y árboles de decisión). La elección del enfoque depende de la naturaleza de los datos, los objetivos del análisis (predicción, comprensión de patrones) y las características específicas de la serie temporal que se está analizando (estacionalidad, volatilidad, tendencia, etc.).
@@ -214,6 +210,73 @@ El análisis de series temporales abarca una amplia variedad de métodos, desde 
 % Bibliografía
 % \nocite{*}
 
-# Anexo 1.
-# Anexo 8.
+## Anexo 1
 
+## Anexo 8
+
+En estadística, un __intervalo de predicción__ proporciona un rango dentro del cual se espera que caiga una observación futura individual con una cierta probabilidad. A diferencia de los intervalos de confianza, que se utilizan para estimar parámetros poblacionales, los intervalos de predicción están diseñados para predecir valores individuales futuros.
+
+### Definición Formal
+
+Sea \( Y_{\text{nuevo}} \) una nueva observación que se desea predecir. Un intervalo de predicción de nivel \( 1 - \alpha \) para \( Y_{\text{nuevo}} \) está definido como el intervalo \([L, U]\) tal que:
+
+\[
+P(L \leq Y_{\text{nuevo}} \leq U) = 1 - \alpha
+\]
+
+Donde:
+
+- \( P \) denota la probabilidad.
+- \( L \) es el límite inferior del intervalo de predicción.
+- \( U \) es el límite superior del intervalo de predicción.
+- \( \alpha \) es el nivel de significancia (por ejemplo, \( \alpha = 0.05 \) para un intervalo de predicción del 95%).
+
+### Cálculo del Intervalo de Predicción
+
+En el contexto de un modelo de regresión lineal, el intervalo de predicción para una nueva observación \( Y_{\text{nuevo}} \) dada una nueva variable independiente \( \mathbf{x}_{\text{nuevo}} \) se calcula de la siguiente manera:
+
+\[
+\hat{Y}_{\text{nuevo}} \pm t_{\alpha/2, n-p} \cdot s \cdot \sqrt{1 + \mathbf{x}_{\text{nuevo}}^\top (\mathbf{X}^\top \mathbf{X})^{-1} \mathbf{x}_{\text{nuevo}}}
+\]
+
+Donde:
+
+- \( \hat{Y}_{\text{nuevo}} \) es la predicción puntual para \( Y_{\text{nuevo}} \).
+- \( t_{\alpha/2, n-p} \) es el valor crítico de la distribución \( t \) de Student con \( n - p \) grados de libertad.
+- \( s \) es la estimación de la desviación estándar del error.
+- \( \mathbf{X} \) es la matriz de diseño de las variables independientes en el modelo de regresión.
+- \( n \) es el número de observaciones.
+- \( p \) es el número de parámetros en el modelo.
+
+### Interpretación
+
+El intervalo de predicción proporciona un rango donde se espera que caiga una nueva observación futura con una probabilidad especificada. Es especialmente útil en aplicaciones donde se necesita predecir valores individuales más que estimar parámetros poblacionales.
+
+### Diferencias con el Intervalo de Confianza
+
+- **Intervalo de Confianza:** Estima un parámetro poblacional (como la media) y proporciona un rango donde se espera que se encuentre el parámetro con cierta probabilidad.
+  
+- **Intervalo de Predicción:** Predice un valor individual futuro y proporciona un rango donde se espera que caiga esa observación con cierta probabilidad.
+
+La implementación en python es la siguiente:
+
+    ```python
+    # usar el dataframe predictions para calcular el intervalo de confianza
+    model = sm.OLS(y_train, X_train).fit()
+    prediccion = model.get_prediction(test)
+    # crear un dataset que tenga la columna 'Price' con las predicciones
+    prediccion = prediccion.summary_frame(alpha=0.05)
+
+    # renombrar la columna mean a 'Price'
+    prediccion = prediccion.rename(columns={'mean': 'Price'})
+    # renombrar la columna obs_ci_lower a 'lower_bound'
+    prediccion = prediccion.rename(columns={'obs_ci_lower': 'lower_bound'})
+    # renombrar la columna obs_ci_upper a 'upper_bound'
+    prediccion = prediccion.rename(columns={'obs_ci_upper': 'upper_bound'})
+    # seleccionar solamente las columnas 'Price', 'lower_bound' y 'upper_bound'
+    prediccion = prediccion[['Price', 'lower_bound', 'upper_bound']]
+
+
+    # calculo para cada fila del dataframe el intervalo de confianza
+    prediccion['intervalo'] = prediccion.apply(lambda x: (x['Price'] - x['lower_bound'], x['upper_bound'] - x['Price']), axis=1)
+    ```
