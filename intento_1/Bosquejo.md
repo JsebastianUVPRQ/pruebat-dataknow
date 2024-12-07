@@ -20,9 +20,9 @@ El objetivo de este estudio es optimizar el monto de inversión que la empresa c
 
 ## 3. Metodología
 
-1. __Preprocesamiento de los datos__: Los datos históricos fueron analizados y preparados, asegurando que no hubiese valores faltantes ni inconsistencias. Se estandarizó el formato de las fechas (YYYY-MM-DD) y los separadores decimales. (Ver Anexo 2)
-2. __Trabajo en la suit de Azure__: Se utilizó la suite de Azure para el análisis de series temporales de la materia prima $X$. Se obtuvo un modelo ARIMA ajustado y luego, en un entorno local, se llevaron a cabo las predicciones para los próximos 36 meses. (Ver Anexo 3)
-3. __Trabajo en entorno local__: Para hacer forecasting de las materias primas $Y$ y $Z$, se utilizó el modelo XGBoost, el cual permite trabajar con series temporales no estacionarias y con múltiples variables predictoras. (Ver Anexo 4)
+1. __Preprocesamiento de los datos__: Los datos históricos fueron analizados y preparados, asegurando que no hubiese valores faltantes ni inconsistencias. Se estandarizó el formato de las fechas (YYYY-MM-DD) y los separadores decimales.
+2. __Trabajo en la suit de Azure__: Se utilizó la suite de Azure para el análisis de series temporales de la materia prima $X$. Se obtuvo un modelo ARIMA ajustado y luego, en un entorno local, se llevaron a cabo las predicciones para los próximos 36 meses.
+3. __Trabajo en entorno local__: Para hacer forecasting de las materias primas $Y$ y $Z$, se utilizó el modelo XGBoost, el cual permite trabajar con series temporales no estacionarias y con múltiples variables predictoras.
 4. __Evaluar resultados__: Con medidas de dispersión como el error cuadrático medio (MSE) y el error absoluto medio (MAE), se evaluaron las predicciones obtenidas.
 5. __Consideraciones finales__: Desarrollo de las conclusiones y consideración de las posibles modificaciones futuras en pos de enriquecer la excatitud y precisión de este análisis.
 
@@ -30,7 +30,7 @@ El objetivo de este estudio es optimizar el monto de inversión que la empresa c
 
 ### Preprocesamiento de los datos
 
-En primer lugar, los datasets de las materias primas $X$, $Y$ y $Z$ diferían en el formato de las fechas, orden de las columnas, y separadores del formato csv. En un notebook (para el código completo Ver Anexo 5) se realiza el preprocesamiento necesario para que estén listos para ser trabajados
+En primer lugar, los datasets de las materias primas $X$, $Y$ y $Z$ diferían en el formato de las fechas, orden de las columnas, y separadores del formato csv. En un notebook (para el código completo Ver Anexo 2) se realiza el preprocesamiento necesario para que estén listos para ser trabajados
 
     ```python
     >>>
@@ -55,7 +55,7 @@ Azure cloud tiene una serie de herramientas que van desde no-code hasta ejecuci�
 
 [^2]: <https://learn.microsoft.com/en-us/azure/machine-learning/quickstart-create-resources>
 
-La carga de los datasets, y almacenamiento de los datasets, el aprovisionamiento de los recursos de cómputo, monitoreo de trabajos, etc; está en el (Anexo 6). El procedimiento lo desarrollé en la interfaz gráfica de Azure AutoML, donde se selecciona el dataset, se elige la variable objetivo, se selecciona el tipo de predicción y se lanzan los experimentos; pero se genera el código que se ejecuta en el entorno de Azure. A continueciòn presento un extracto.
+La carga de los datasets, y almacenamiento de los datasets, el aprovisionamiento de los recursos de cómputo, monitoreo de trabajos, etc; está en el (Anexo 3). El procedimiento lo desarrollé en la interfaz gráfica de Azure AutoML, donde se selecciona el dataset, se elige la variable objetivo, se selecciona el tipo de predicción y se lanzan los experimentos; pero se genera el código que se ejecuta en el entorno de Azure. A continueciòn presento un extracto.
 
     ```python
 
@@ -103,7 +103,7 @@ La carga de los datasets, y almacenamiento de los datasets, el aprovisionamiento
     returned_job.studio_url
     ```
 
-Luego de los experimentos, se obtiene el mejor modelo, que en este caso fue Arimax (Teoría: Ver Anexo 7). Las métricas principales se muestran en la figura:
+Luego de los experimentos, se obtiene el mejor modelo, que en este caso fue Arimax. Las métricas principales se muestran en la figura:
 ![[metricas_arima.png]]
 
 Se descarga el modelo y se ejecuta en un entorno local para hacer las predicciones.
@@ -188,7 +188,7 @@ En la siguiente tabla se consignan los valores obtenidos para los meses 0 (actua
 |      $Y$ +- 12.4      | 547.3 | 614.1  | 589.3  | 568.9  |
 |      $Z$ +- 32.49     | 2165.3| 1834.1 | 2246.7 | 2483.5 |
 
-La medida de confianza que se usa para reportar cada predicción es el intervalo de predicción, que se calcula a partir de la __desviación estándar de los residuos__(Ver Anexo 8) y el $mse$ de cada modelo.
+La medida de confianza que se usa para reportar cada predicción es el intervalo de predicción, que se calcula a partir de la __desviación estándar de los residuos__(Ver Anexo 4) y el $mse$ de cada modelo.
 Veamos ahora el calculo de los costos de los equipos 1 y 2 para el futuro (tabla: \ref{tab:costos_equipos}).
 $$
 \text{Costo Equipo 1} = 0.2 \times \text{Precio $X$} + 0.8 \times \text{Precio $Y$}~ \text{Costo Equipo 2} = dfrac{1}{3} (\times \text{Precio $X$} + \times \text{Precio $Y$} + \times \text{Precio $Z$})
@@ -258,7 +258,44 @@ ARIMAX es usado en multiples campos, tales como:
 
 ## Anexo 2
 
-## Anexo 8
+```python	
+# leer archivos (3 excels) contenidos en la carpeta 'datos'
+df1 = pd.read_csv('Datos/X.csv')
+df2 = pd.read_csv('Datos/Y.csv', delimiter=';')
+df3 = pd.read_csv('Datos/Z.csv')
+# ...
+df1 = df1.iloc[::-1]
+# resetear el indice de df1
+df1 = df1.reset_index(drop=True)
+
+# cambiar los / por - en la columna 'Date' y convertir la columna 'Price' a tipo float
+df2['Date'] = df2['Date'].str.replace('/', '-')
+df2['Price'] = df2['Price'].str.replace(',', '.').astype(float)
+
+# convertir la columna 'Date' a tipo datetime
+df2['Date'] = pd.to_datetime(df2['Date'])
+# pasar del formato dd/mm/yyyy a yyyy-mm-dd
+df2['Date'] = pd.to_datetime(df2['Date'], format='%d/%m/%Y').dt.strftime('%Y-%m-%d')
+
+# exportar los dataframes a archivos csv
+df1.to_csv('Datos/X_modificado.csv', index=True)
+df2.to_csv('Datos/Y_modificado.csv', index=True)
+df3.to_csv('Datos/Z_modificado.csv', index=True)
+```	
+
+## Anexo 3
+
+## Anexo 4
+
+las medidas de dispersión usadas fueron, básicamente, la desviación estándar y el error cuadrático medio (MSE). La desviación estándar se define como la raíz cuadrada de la varianza, y mide la dispersión de los datos alrededor de la media. Por otro lado, el MSE es una medida de la diferencia entre los valores observados y los valores predichos por un modelo.
+
+$$
+\text{Desviación Estándar} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})^2} 
+$$
+
+$$
+\text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
+$$
 
 En estadística, un __intervalo de predicción__ proporciona un rango dentro del cual se espera que caiga una observación futura individual con una cierta probabilidad. A diferencia de los intervalos de confianza, que se utilizan para estimar parámetros poblacionales, los intervalos de predicción están diseñados para predecir valores individuales futuros.
 
