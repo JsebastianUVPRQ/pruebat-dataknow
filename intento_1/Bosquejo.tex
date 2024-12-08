@@ -12,8 +12,12 @@ proporciones de las materias primas \(X\), \(Y\) y \(Z\). El objetivo de
 este estudio es optimizar el monto de inversión que la empresa
 constructora debe realizar en la adquisición de los equipos en el
 futuro. Para esto, se usarán técnicas de análisis de series temporales
-para predecir los precios de las materias primas \(X\), \(Y\) y \(Z\) en
-los próximos 36 meses.
+(Teoría: Ver Anexo 1) para predecir los precios de las materias primas
+\(X\), \(Y\) y \(Z\) en los próximos 36 meses. Se reporta como resultado
+que el momento óptimo para la compra de los equipos es aproximadamente
+en el mes 12, contando desde la actualidad. Si los equipos se requieren
+inmediatamente, se puede gestionar con mecanismos como Contratos de
+Ajuste de Precios () o Pago diferido
 
 \subsection{2. Supuestos}\label{supuestos}
 
@@ -29,7 +33,7 @@ los próximos 36 meses.
   Los datos históricos se recopilan hasta abril 2024, diciembre 2023 y
   agosto 2023 para \(X\), \(Y\) y \(Z\), respectivamente.
 \item
-  Cada materia prima es susceptible a distinta volatilidad{[}\^{}1{]}.
+  Cada materia prima es susceptible a distinta volatilidad.
 \end{itemize}
 
 \subsection{3. Metodología}\label{metodologuxeda}
@@ -41,18 +45,17 @@ los próximos 36 meses.
   \textbf{Preprocesamiento de los datos}: Los datos históricos fueron
   analizados y preparados, asegurando que no hubiese valores faltantes
   ni inconsistencias. Se estandarizó el formato de las fechas
-  (YYYY-MM-DD) y los separadores decimales. (Ver Anexo 2)
+  \((YYYY-MM-DD)\) y los separadores decimales.
 \item
   \textbf{Trabajo en la suit de Azure}: Se utilizó la suite de Azure
   para el análisis de series temporales de la materia prima \(X\). Se
   obtuvo un modelo ARIMA ajustado y luego, en un entorno local, se
-  llevaron a cabo las predicciones para los próximos 36 meses. (Ver
-  Anexo 3)
+  llevaron a cabo las predicciones para los próximos 36 meses.
 \item
   \textbf{Trabajo en entorno local}: Para hacer forecasting de las
   materias primas \(Y\) y \(Z\), se utilizó el modelo XGBoost, el cual
   permite trabajar con series temporales no estacionarias y con
-  múltiples variables predictoras. (Ver Anexo 4)
+  múltiples variables predictoras.
 \item
   \textbf{Evaluar resultados}: Con medidas de dispersión como el error
   cuadrático medio (MSE) y el error absoluto medio (MAE), se evaluaron
@@ -63,7 +66,7 @@ los próximos 36 meses.
   enriquecer la excatitud y precisión de este análisis.
 \end{enumerate}
 
-\subsection{4. Análisis completo}\label{anuxe1lisis-completo}
+\subsection{4. Análisis}\label{anuxe1lisis}
 
 \subsubsection{Preprocesamiento de los
 datos}\label{preprocesamiento-de-los-datos}
@@ -71,7 +74,7 @@ datos}\label{preprocesamiento-de-los-datos}
 En primer lugar, los datasets de las materias primas \(X\), \(Y\) y
 \(Z\) diferían en el formato de las fechas, orden de las columnas, y
 separadores del formato csv. En un notebook (para el código completo Ver
-Anexo 5) se realiza el preprocesamiento necesario para que estén listos
+Anexo 2) se realiza el preprocesamiento necesario para que estén listos
 para ser trabajados
 
 \begin{verbatim}
@@ -106,11 +109,11 @@ en el que estarán los recursos a usar (almacenamiento, cómputo, etc).
 
 La carga de los datasets, y almacenamiento de los datasets, el
 aprovisionamiento de los recursos de cómputo, monitoreo de trabajos,
-etc; está en el (Anexo 6). El procedimiento lo desarrollé en la interfaz
+etc; está en el (Anexo 3). El procedimiento lo desarrollé en la interfaz
 gráfica de Azure AutoML, donde se selecciona el dataset, se elige la
 variable objetivo, se selecciona el tipo de predicción y se lanzan los
 experimentos; pero se genera el código que se ejecuta en el entorno de
-Azure. A continueciòn presento un extracto.
+Azure. A continuación presento un extracto.
 
 \begin{verbatim}
 ```python
@@ -128,7 +131,8 @@ workspace_name = "workspace_arima_3011"
 credential = DefaultAzureCredential()
 ml_client = MLClient(credential, subscription_id, resource_group, workspace_name)
 workspace = ml_client.workspaces.get(name=ml_client.workspace_name)
-print(ml_client.workspace_name, workspace.resource_group, workspace.location, ml_client.connections._subscription_id, sep = '\n')
+print(ml_client.workspace_name, workspace.resource_group, workspace.location, 
+    ml_client.connections._subscription_id, sep = '\n')
 # ...
 # Choose a name for your CPU cluster
 cluster_name = "cpu-cluster"
@@ -145,8 +149,9 @@ except Exception:
 # ...
 from azure.ai.ml import command, Input
 
-# To test with new training / validation datasets, replace the default dataset id(s)/uri(s) taken from parent run below
-command_str = 'python script.py --training_dataset_uri azureml://locations/eastus/workspaces/036f090e-319e-4836-bac1-a5ad6f8e86a0/data/train-XA/versions/1 --validation_dataset_uri azureml://locations/eastus/workspaces/036f090e-319e-4836-bac1-a5ad6f8e86a0/data/test-XA/versions/1'
+# To test with new training / validation datasets, replace 
+# the default dataset id(s)/uri(s) taken from parent run below
+command_str = 'python script.py --training_dataset_uri azureml://locations[...]'
 command_job = command(
     code=project_folder,
     command=command_str,
@@ -161,78 +166,15 @@ returned_job.studio_url
 \end{verbatim}
 
 Luego de los experimentos, se obtiene el mejor modelo, que en este caso
-fue Arimax (Teoría: Ver Anexo 7). Las métricas principales se muestran
-en la figura: !{[}{[}metricas\_arima.png{]}{]}
+fue Arimax. Las métricas principales se muestran en la figura:
+!{[}{[}metricas\_arima.png{]}{]}
 
 Se descarga el modelo y se ejecuta en un entorno local para hacer las
 predicciones.
 
 \subsubsection{Trabajo en entorno local}\label{trabajo-en-entorno-local}
 
-El entrenamiento para las materias primas \(Y\) y \(Z\) se realizó en
-notebooks ejecutados en un entorno local. Se utilizó la clase
-\texttt{XGBRegressor} de la librería `xgboost' para entrenar los modelos
-y hacer las predicciones, a través del método \textbf{recursive
-forecasting}. A continuación, se muestra un extracto del código
-utilizado para el entrenamiento y la predicción de los precios de la
-materia prima \(Y\). El código para z es equivalente.
 
-\begin{verbatim}
-```python
-% from sklearn.model_selection import train_test_split
-% from sklearn.metrics import mean_squared_error
-% import xgboost as xgb
-% from sklearn.preprocessing import StandardScaler
-# ...
-df['Date'] = pd.to_datetime(df['Date'])
-
-# Establecer la columna 'fecha' como índice
-df.set_index('Date', inplace=True)
-# ...
-# Crear características de serie temporal (lag features)
-def create_lag_features(df, lags=5):
-    for lag in range(1, lags + 1):
-        df[f'lag_{lag}'] = df['Price'].shift(lag)
-    df = df.dropna()  # Eliminar filas con valores nulos
-    return df
-
-# Crear características de lag
-df = create_lag_features(df, lags=5)
-
-# Dividir los datos en conjunto de entrenamiento y prueba
-train_size = int(len(df) * 0.7)
-train, test = df.iloc[:train_size], df.iloc[train_size:]
-
-# Separar las características (X) y el target (y)
-X_train = train.drop(columns=['Price'])
-y_train = train['Price']
-X_test = test.drop(columns=['Price'])
-y_test = test['Price']
-# ...
-# Create forecaster
-# ==============================================================================
-end_validation = '2023-12-09'
-
-window_features = RollingFeatures(stats=["coef_variation"], window_sizes=4200)
-forecaster = ForecasterRecursive(
-                regressor       = XGBRegressor(random_state=15926, enable_categorical=True),
-                lags            = 3000,
-                window_features = window_features
-             )
-
-# Train forecaster
-# ==============================================================================
-forecaster.fit(y=df.loc[:end_validation, 'Price'])
-
-# Calcular el error cuadrático medio (MSE) -> El resultado fue 61.2
-mse = mean_squared_error(y_train, predictions)
-print(f"Error cuadrático medio (MSE): {mse  }")
-
-# prediccion_anio_n = forecaster.predict(steps=(365*n))
-
-
-```
-\end{verbatim}
 
 La mse (error cuadrático medio) obtenida fue de 61.2, lo cual es un
 valor relativamente alto para los valores registrados como precio en el
@@ -261,51 +203,60 @@ Materia Prima & Mes 0 & Mes 12 & Mes 24 & Mes 36 \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-X & 12.5 & 13.2 & 14.1 & 11.1 \\
+\(X\) +- 1.73 & 89.2 & 82.8 & 88.2 & 79.5 \\
+\(Y\) +- 12.4 & 547.3 & 614.1 & 589.3 & 568.9 \\
+\(Z\) +- 32.49 & 2165.3 & 1834.1 & 2246.7 & 2483.5 \\
 \end{longtable}
 
 La medida de confianza que se usa para reportar cada predicción es el
 intervalo de predicción, que se calcula a partir de la
-\textbf{desviación estándar de los residuos}(Ver Anexo 8) del modelo.
-
-\[
-\int_{-\infty}
+\textbf{desviación estándar de los residuos}(Ver Anexo 4) y el \(mse\)
+de cada modelo. Veamos ahora el calculo de los costos de los equipos 1 y
+2 para el futuro (tabla: \ref{tab:costos_equipos}). \[
+\text{Costo Equipo 1} = 0.2 \times \text{Precio $X$} + 0.8 \times \text{Precio $Y$}~ \text{Costo Equipo 2} = dfrac{1}{3} (\times \text{Precio $X$} + \times \text{Precio $Y$} + \times \text{Precio $Z$})
 \]
 
-\subsubsection{Código utilizado}\label{cuxf3digo-utilizado}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1429}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2857}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1905}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1905}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1905}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Actualidad
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Mes 12
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Mes 24
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Mes 36
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Equipo 1 & 455.7 +- (89.2 * 0.0173)+ (547.3 * 0.124) & 507.8 +- & 489.08
++- & 471.05 +- \\
+Equipo 2 & 933.92 +- (89.2 * 0.0173)+ (547.3 * 0.124) + (2165.3 *
+0.3249) & 843.67 +- & 974.75 +- & 1043.97 +- \\
+Total & 1389.62 +- & 1351.5 +- & 1463.83 +- & 1515.0 +- \\
+\end{longtable}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\# Ejemplo de código de ajuste del modelo ARIMA para la materia prima X}
-\ImportTok{from}\NormalTok{ statsmodels.tsa.arima.model }\ImportTok{import}\NormalTok{ ARIMA}
-\NormalTok{modelo }\OperatorTok{=}\NormalTok{ ARIMA(precio\_x, order}\OperatorTok{=}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{))}
-\NormalTok{modelo\_ajustado }\OperatorTok{=}\NormalTok{ modelo.fit()}
-\NormalTok{forecast }\OperatorTok{=}\NormalTok{ modelo\_ajustado.forecast(steps}\OperatorTok{=}\DecValTok{12}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\subsection{5. Consideraciones finales}\label{consideraciones-finales}
 
-\subsection{Estudio sobre Políticas
-Públicas}\label{estudio-sobre-poluxedticas-puxfablicas}
-
-El análisis de las políticas públicas ha demostrado que las reformas
-implementadas han tenido efectos significativos en la sociedad (Pérez
-2020).
-
-Además, algunos estudios sugieren que las políticas sociales, cuando
-están bien implementadas, tienen un impacto directo sobre la calidad de
-vida (González 2019).
-
-\textbf{Modelos de Longo Plazo y Ciclos}
-
-\begin{itemize}
-\tightlist
-\item
-  En algunos casos, las series temporales presentan \textbf{ciclos} o
-  tendencias de largo plazo que no son estrictamente estacionales, sino
-  influenciados por factores macroeconómicos o industriales. Los
-  \textbf{modelos de ciclos económicos} o \textbf{ciclos de mercado}
-  pueden ser útiles para capturar estos patrones.
-\end{itemize}
+En conclusión, el momento óptimo para la adquisición de los equipos es
+en 12 meses de desarrollo del proyecto, pues los costos de los equipos 1
+y 2 son menores en comparación con los costos actuales y futuros. Sin
+embargo, es importante tener en cuenta que las predicciones realizadas
+tienen un margen de error, por lo que se recomienda monitorear los
+precios de las materias primas y ajustar las estrategias de inversión en
+consecuencia. Por ejemplo, reentrenar los modelos en el transcurso del
+futuro. También se podría agregar una medida de la inflación () prevista
+por el banco mundial (u organismos similares) en el pais donde se
+desarrolla el proyecto; además de una medida de la volatilidad del
+mercado () (Hstórica y esperada) para las materias primas.
 
 \subsection{Conclusión}\label{conclusiuxf3n}
 
@@ -316,22 +267,262 @@ técnicas más modernas de aprendizaje automático (como redes neuronales y
 de los datos, los objetivos del análisis (predicción, comprensión de
 patrones) y las características específicas de la serie temporal que se
 está analizando (estacionalidad, volatilidad, tendencia, etc.).
+# citar un numerito referente a un articulo (mostrar al pie de la página): 
 
-\% Bibliografía \% \nocite{*}
+\subsection{Referencias}\label{referencias}
 
-\section{Anexo 1.}\label{anexo-1.}
 
-\section*{Anexo 8.}\label{anexo-8.}
-\addcontentsline{toc}{section}{Anexo 8.}
 
-\phantomsection\label{refs}
-\begin{CSLReferences}{1}{0}
-\bibitem[\citeproctext]{ref-gonzalez2019}
-González, Marta. 2019. {``Impacto de Las Políticas Sociales En La
-Sociedad.''} \emph{Revista de Ciencias Sociales} 14 (3): 150--75.
+\subsection{Anexo 1}\label{anexo-1}
 
-\bibitem[\citeproctext]{ref-perez2020}
-Pérez, Juan. 2020. \emph{Políticas Públicas En Colombia}. Editorial
-Universitaria.
+El estudio de series temporales es un tema extenso, por lo tanto se
+tratará solamente modelos de Machine Learning: XGBoost y ARIMAX. XGBoost
+es un algoritmo de aprendizaje automático basado en árboles de decisión
+que se utiliza comúnmente para problemas de regresión. Su formalización
+matemática se basa en la minimización de una función de pérdida, de la
+siguiente forma:
 
-\end{CSLReferences}
+{[} \mathcal{L} = \sum\_\{i=1\}\^{}\{n\} L(y\_i, \hat{y}\emph{i) +
+\sum}\{k=1\}\^{}\{K\} \Omega(h\_k) {]} XGBoost utiliza una aproximación
+de \textbf{segunda orden} (incluyendo derivadas primeras y segundas)
+para optimizar la función de pérdida. Para cada iteración ( k ), se
+calcula la mejora ( \gamma\_k ) que minimiza la función objetivo:
+
+{[} \gamma\emph{k = \arg\min}\{\gamma\}
+\left[ \sum_{i \in I_k} L(y_i, F_{k-1}(x_i) + \gamma) \right] +
+\Omega(\gamma) {]} XGBoost construye árboles de decisión de manera
+aditiva. Cada árbol nuevo se agrega al modelo existente para corregir
+los errores residuales. La construcción de cada árbol implica:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{División de Nodos:} Selección de la mejor característica y
+  punto de división que maximice la ganancia de información.
+\item
+  \textbf{Asignación de Pesos:} Determinación de los pesos óptimos para
+  cada hoja, minimizando la función objetivo localmente.
+\item
+  \textbf{Poda:} Eliminación de ramas que no contribuyen
+  significativamente al modelo, según los parámetros de regularización.
+\end{enumerate}
+
+Por otro lado, ARIMAX es un modelo de regresión lineal que incorpora
+términos autorregresivos (AR), de medias móviles (MA) y diferenciación
+(I) para modelar series temporales. Antes de profundizar en ARIMAX, es
+esencial comprender los componentes básicos de ARIMA:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{AR (AutoRegressive):} Captura la relación lineal entre una
+  observación actual y un número de observaciones anteriores.
+\item
+  \textbf{I (Integrated):} Indica el número de veces que la serie debe
+  ser diferenciada para alcanzar la estacionariedad.
+\item
+  \textbf{MA (Moving Average):} Modela el error de predicción como una
+  combinación lineal de errores pasados. El modelo ARIMAX puede
+  expresarse como:
+\end{itemize}
+
+{[} \Phi(B) (1 - B)\^{}d Y\_t = \Theta(B) \epsilon\_t + \beta\emph{1
+X}\{1,t\} + \beta\emph{2 X}\{2,t\} + \dots + \beta\emph{k X}\{k,t\} {]}
+
+Donde:
+
+\begin{itemize}
+\tightlist
+\item
+  ( B ) es el operador de rezago (( B Y\_t = Y\_\{t-1\} )).
+\item
+  ( \Phi(B) = 1 - \phi\_1 B - \phi\_2 B\^{}2 - \dots - \phi\_p B\^{}p )
+  representa la parte autorregresiva.
+\item
+  ( \Theta(B) = 1 + \theta\_1 B + \theta\_2 B\^{}2 + \dots + \theta\_q
+  B\^{}q ) representa la parte de media móvil.
+\item
+  ( \epsilon\_t ) es el término de error aleatorio, generalmente asumido
+  como ruido blanco (( \epsilon\_t \sim \mathcal{N}(0, \sigma\^{}2) )).
+\item
+  ( \beta\emph{1, \beta\emph{2, \dots, \beta\emph{k ) son los
+  coeficientes asociados a las variables exógenas ( X}\{1,t\},
+  X}\{2,t\}, \dots, X}\{k,t\} ).
+\end{itemize}
+
+ARIMAX es usado en multiples campos, tales como:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Economía:} Modelado de indicadores macroeconómicos
+  influenciados por variables exógenas como tasas de interés.
+\item
+  \textbf{Marketing:} Predicción de ventas basada en campañas
+  publicitarias u otras variables de marketing.
+\item
+  \textbf{Salud Pública:} Pronóstico de enfermedades considerando
+  factores externos como clima o políticas de salud.
+\item
+  \textbf{Ingeniería:} Monitoreo de procesos industriales con
+  influencias externas.
+\end{itemize}
+
+\subsection{Anexo 2}\label{anexo-2}
+
+\begin{verbatim}
+```python
+# leer archivos (3 excels) contenidos en la carpeta 'datos'
+df1 = pd.read_csv('Datos/X.csv')
+df2 = pd.read_csv('Datos/Y.csv', delimiter=';')
+df3 = pd.read_csv('Datos/Z.csv')
+# ...
+df1 = df1.iloc[::-1]
+# resetear el indice de df1
+df1 = df1.reset_index(drop=True)
+
+# cambiar los / por - en la columna 'Date' y convertir la columna 'Price' a tipo float
+df2['Date'] = df2['Date'].str.replace('/', '-')
+df2['Price'] = df2['Price'].str.replace(',', '.').astype(float)
+
+# convertir la columna 'Date' a tipo datetime
+df2['Date'] = pd.to_datetime(df2['Date'])
+# pasar del formato dd/mm/yyyy a yyyy-mm-dd
+df2['Date'] = pd.to_datetime(df2['Date'], format='%d/%m/%Y').dt.strftime('%Y-%m-%d')
+
+# exportar los dataframes a archivos csv
+df1.to_csv('Datos/X_modificado.csv', index=True)
+df2.to_csv('Datos/Y_modificado.csv', index=True)
+df3.to_csv('Datos/Z_modificado.csv', index=True)
+```
+\end{verbatim}
+
+\subsection{Anexo 3}\label{anexo-3}
+
+\subsection{Anexo 4}\label{anexo-4}
+
+las medidas de dispersión usadas fueron, básicamente, la desviación
+estándar y el error cuadrático medio (MSE). La desviación estándar se
+define como la raíz cuadrada de la varianza, y mide la dispersión de los
+datos alrededor de la media. Por otro lado, el MSE es una medida de la
+diferencia entre los valores observados y los valores predichos por un
+modelo.
+
+\[
+\text{Desviación Estándar} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})^2}
+\]
+
+\[
+\text{MSE} = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2
+\]
+
+En estadística, un \textbf{intervalo de predicción} proporciona un rango
+dentro del cual se espera que caiga una observación futura individual
+con una cierta probabilidad. A diferencia de los intervalos de
+confianza, que se utilizan para estimar parámetros poblacionales, los
+intervalos de predicción están diseñados para predecir valores
+individuales futuros.
+
+\subsubsection{Definición Formal}\label{definiciuxf3n-formal}
+
+Sea ( Y\_\{\text{nuevo}\} ) una nueva observación que se desea predecir.
+Un intervalo de predicción de nivel ( 1 - \alpha ) para (
+Y\_\{\text{nuevo}\} ) está definido como el intervalo ({[}L, U{]}) tal
+que:
+
+{[} P(L \leq Y\_\{\text{nuevo}\} \leq U) = 1 - \alpha {]}
+
+Donde:
+
+\begin{itemize}
+\tightlist
+\item
+  ( P ) denota la probabilidad.
+\item
+  ( L ) es el límite inferior del intervalo de predicción.
+\item
+  ( U ) es el límite superior del intervalo de predicción.
+\item
+  ( \alpha ) es el nivel de significancia (por ejemplo, ( \alpha = 0.05
+  ) para un intervalo de predicción del 95\%).
+\end{itemize}
+
+\subsubsection{Cálculo del Intervalo de
+Predicción}\label{cuxe1lculo-del-intervalo-de-predicciuxf3n}
+
+En el contexto de un modelo de regresión lineal, el intervalo de
+predicción para una nueva observación ( Y\_\{\text{nuevo}\} ) dada una
+nueva variable independiente ( \mathbf{x}\_\{\text{nuevo}\} ) se calcula
+de la siguiente manera:
+
+{[} \hat{Y}\emph{\{\text{nuevo}\} \pm t}\{\alpha/2, n-p\} \cdot s
+\cdot \sqrt{1 + \mathbf{x}_{\text{nuevo}}^\top (\mathbf{X}^\top \mathbf{X})^{-1} \mathbf{x}_{\text{nuevo}}}
+{]}
+
+Donde:
+
+\begin{itemize}
+\tightlist
+\item
+  ( \hat{Y}\emph{\{\text{nuevo}\} ) es la predicción puntual para (
+  Y}\{\text{nuevo}\} ).
+\item
+  ( t\_\{\alpha/2, n-p\} ) es el valor crítico de la distribución ( t )
+  de Student con ( n - p ) grados de libertad.
+\item
+  ( s ) es la estimación de la desviación estándar del error.
+\item
+  ( \mathbf{X} ) es la matriz de diseño de las variables independientes
+  en el modelo de regresión.
+\item
+  ( n ) es el número de observaciones.
+\item
+  ( p ) es el número de parámetros en el modelo.
+\end{itemize}
+
+\subsubsection{Interpretación}\label{interpretaciuxf3n}
+
+El intervalo de predicción proporciona un rango donde se espera que
+caiga una nueva observación futura con una probabilidad especificada. Es
+especialmente útil en aplicaciones donde se necesita predecir valores
+individuales más que estimar parámetros poblacionales.
+
+\subsubsection{Diferencias con el Intervalo de
+Confianza}\label{diferencias-con-el-intervalo-de-confianza}
+
+\begin{itemize}
+\item
+  \textbf{Intervalo de Confianza:} Estima un parámetro poblacional (como
+  la media) y proporciona un rango donde se espera que se encuentre el
+  parámetro con cierta probabilidad.
+\item
+  \textbf{Intervalo de Predicción:} Predice un valor individual futuro y
+  proporciona un rango donde se espera que caiga esa observación con
+  cierta probabilidad.
+\end{itemize}
+
+La implementación en python es la siguiente:
+
+\begin{verbatim}
+```python
+# usar el dataframe predictions para calcular el intervalo de confianza
+model = sm.OLS(y_train, X_train).fit()
+prediccion = model.get_prediction(test)
+# crear un dataset que tenga la columna 'Price' con las predicciones
+prediccion = prediccion.summary_frame(alpha=0.05)
+
+# renombrar la columna mean a 'Price'
+prediccion = prediccion.rename(columns={'mean': 'Price'})
+# renombrar la columna obs_ci_lower a 'lower_bound'
+prediccion = prediccion.rename(columns={'obs_ci_lower': 'lower_bound'})
+# renombrar la columna obs_ci_upper a 'upper_bound'
+prediccion = prediccion.rename(columns={'obs_ci_upper': 'upper_bound'})
+# seleccionar solamente las columnas 'Price', 'lower_bound' y 'upper_bound'
+prediccion = prediccion[['Price', 'lower_bound', 'upper_bound']]
+
+
+# calculo para cada fila del dataframe el intervalo de confianza
+prediccion['intervalo'] = prediccion.apply(lambda x: (x['Price'] - x['lower_bound'], x['upper_bound'] - x['Price']), axis=1)
+```
+\end{verbatim}

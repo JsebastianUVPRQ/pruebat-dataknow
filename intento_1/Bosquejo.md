@@ -183,16 +183,24 @@ En la siguiente tabla se consignan los valores obtenidos para los meses 0 (actua
 |      $Z$ +- 32.49     | 2165.3| 1834.1 | 2246.7 | 2483.5 |
 
 La medida de confianza que se usa para reportar cada predicción es el intervalo de predicción, que se calcula a partir de la __desviación estándar de los residuos__(Ver Anexo 4) y el $mse$ de cada modelo.
-Veamos ahora el calculo de los costos de los equipos 1 y 2 para el futuro (tabla: \ref{tab:costos_equipos}).
+Veamos ahora el calculo de los costos de los equipos 1 y 2 para el futuro (tabla: \ref{tab:costos_equipos}). A partir de estos resultados, se llega a la conclusión del momento óptimo para la adquisición de los equipos por parte del cliente.
+
 $$
 \text{Costo Equipo 1} = 0.2 \times \text{Precio $X$} + 0.8 \times \text{Precio $Y$}~ \text{Costo Equipo 2} = dfrac{1}{3} (\times \text{Precio $X$} + \times \text{Precio $Y$} + \times \text{Precio $Z$})
 $$
 
+
 |      | Actualidad | Mes 12 | Mes 24 | Mes 36 |
 |------|------------|--------|--------|--------|
-| Equipo 1 | 455.7 +- (89.2 * 0.0173)+ (547.3 * 0.124) | 507.8 +- | 489.08 +- | 471.05 +- |
-| Equipo 2 | 933.92 +- (89.2 * 0.0173)+ (547.3 * 0.124) + (2165.3 * 0.3249) | 843.67 +- | 974.75 +- | 1043.97 +- |
+| Equipo 1 | 455.7 +- 19.4 | 507.8 +- 12.58 | 489.08 +- 15.2 | 471.05 +- 11.47|
+
+| Equipo 2 | 933.92 +- 108.9 | 1023.5 +- 116.3 | 1000.2 +- 134.5 | 978.5 +- 141.5|
+
 | Total | 1389.62 +- | 1351.5 +- | 1463.83 +- | 1515.0 +- |
+
+% multiplicar (89.2 * 0.0173) + (547.3 * 0.124) + (2165.3 * 0.03249) da como resultado 108.9
+
+los +- se calculan usando la fórmula que involucra las derivadas parciales de la función de costo con respecto a cada variable, después de hacer una multiplicación que considere no solo la incertidumbre de la materia prima sino también las magnitudes de cada punto de datos involucrado. 
 
 ## 5. Consideraciones finales
 
@@ -296,6 +304,14 @@ Sea \( Y_{\text{nuevo}} \) una nueva observación que se desea predecir. Un inte
 \[
 P(L \leq Y_{\text{nuevo}} \leq U) = 1 - \alpha
 \]
+
+% insertar imagenes de un pdf como si fueran una pagina (no usar caption, ni label, ni titulo, sino que se vea como una imagen de un pdf)
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{screenshot_1.jpg}
+\end{figure}
+
+
 
 Donde:
 
