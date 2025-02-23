@@ -55,7 +55,8 @@
             "state": {
               "type": "file-explorer",
               "state": {
-                "sortOrder": "alphabetical"
+                "sortOrder": "alphabetical",
+                "autoReveal": false
               },
               "icon": "lucide-folder-closed",
               "title": "Explorador de archivos"
@@ -177,10 +178,11 @@
       "command-palette:Abrir paleta de comandos": false
     }
   },
-  "active": "ae8a975625e5f80c",
+  "active": "3410a27a79130014",
   "lastOpenFiles": [
-    "resumen_explicación/codigo convert OOP.md",
+    "Imbanaco pacientes.md",
     "IA - AI - Generativa DataKnow.md",
+    "resumen_explicación/codigo convert OOP.md",
     "resumen_explicación/Y_modificado.csv",
     "resumen_explicación/modelo arima en Azure.md",
     "resumen_explicación/desktop.ini",
